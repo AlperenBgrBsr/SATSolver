@@ -9,10 +9,6 @@ src/fuzz
 fuzz_tmp.cnf
 fuzz-fail-*.cnf
 
-# Benchmark set (see README: download from SATLIB)
-tests/uf20-91/
-tests/uuf*/
-
 # Editor / OS
 .vscode/
 .DS_Store

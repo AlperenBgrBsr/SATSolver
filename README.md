@@ -95,11 +95,11 @@ mismatches**, clean under UBSan and libc++ hardening.
 
 ### Benchmark set
 
-`tests/uf20-91/` is not committed. To run the full suite, download the
-`uf20-91` set (1000 satisfiable random 3-SAT instances) from
-[SATLIB](https://www.cs.ubc.ca/~hoos/SATLIB/benchm.html) and extract it there.
-Without it the suite still runs on the committed edge cases in `tests/sat/` and
-`tests/unsat/`.
+`tests/uf20-91/` holds 1000 uniform random 3-SAT instances (20 variables,
+91 clauses, all satisfiable) from
+[SATLIB](https://www.cs.ubc.ca/~hoos/SATLIB/benchm.html), redistributed
+unmodified so the suite runs from a fresh clone. They are not covered by this
+project's licence — see [tests/uf20-91/SOURCE.md](tests/uf20-91/SOURCE.md).
 
 ## How it works
 
@@ -138,7 +138,7 @@ tests/
   run_tests.py    regression runner with independent model verification
   sat/            satisfiable edge cases
   unsat/          unsatisfiable instances
-  uf20-91/        SATLIB benchmark set (not committed, see above)
+  uf20-91/        SATLIB benchmark set, 1000 satisfiable instances
 ```
 
 ## References
