@@ -1,0 +1,21 @@
+# Build artifacts
+*.o
+.build-mode
+src/sat
+src/fuzz
+*.dSYM/
+
+# Fuzzer output
+fuzz_tmp.cnf
+fuzz-fail-*.cnf
+
+# Benchmark set (see README: download from SATLIB)
+tests/uf20-91/
+tests/uuf*/
+
+# Editor / OS
+.vscode/
+.DS_Store
+
+# Agent guidance, kept local
+CLAUDE.md
