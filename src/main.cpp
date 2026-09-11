@@ -12,6 +12,8 @@ int main(int argc, char** argv) {
     SATSolver solver;
     bool sat = solver.solve(argv[1]);
 
+    solver.print_stats(cout);
+
     if (!sat) {
         cout << "s UNSATISFIABLE" << endl;
         return 20;

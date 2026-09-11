@@ -5,6 +5,9 @@ src/sat
 src/fuzz
 *.dSYM/
 
+# Generated benchmark instances (reproduce with tests/gen_bench.py)
+tests/bench/
+
 # Fuzzer output
 fuzz_tmp.cnf
 fuzz-fail-*.cnf

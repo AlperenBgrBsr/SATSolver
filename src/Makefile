@@ -82,6 +82,19 @@ release:
 	@$(MAKE) --no-print-directory clean
 	@$(MAKE) --no-print-directory all CXXFLAGS="$(filter-out -g,$(CXXFLAGS)) -O2 -DNDEBUG"
 
+# Benchmark instances. Generated, not vendored, and deliberately outside the
+# regression suite - `make test` does not touch them. Take timings on a
+# `make release` build; a -g or sanitized build measures the wrong thing.
+#   make bench-gen                       regenerate tests/bench
+#   make bench BENCHFLAGS="--timeout 60 --out ../tests/baseline.txt"
+BENCHFLAGS ?= --timeout 60
+
+bench-gen:
+	@python3 ../tests/gen_bench.py
+
+bench: $(TARGET)
+	@python3 ../tests/bench.py $(BENCHFLAGS)
+
 # make run CNF=../tests/uf20-91/uf20-01.cnf
 CNF ?= ../tests/uf20-91/uf20-01.cnf
 # The `-` ignores the exit status: 10 = SAT, 20 = UNSAT are successes here.
@@ -93,4 +106,4 @@ clean:
 	rm -f $(OBJS) $(TARGET) fuzz fuzz.o fuzz_tmp.cnf .build-mode
 	rm -rf *.dSYM
 
-.PHONY: all test check fuzz fuzz-bin release run clean FORCE
+.PHONY: all test check fuzz fuzz-bin release run clean bench bench-gen FORCE
