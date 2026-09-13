@@ -1,4 +1,4 @@
-# solver baseline
+# solver run: pre-deletion baseline
 # generated 2026-09-08 00:29:58
 # timeout 60s
 # build: make release (-O2 -DNDEBUG); no clause deletion; best of 3
