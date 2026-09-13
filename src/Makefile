@@ -17,11 +17,11 @@ endif
 TARGET = sat
 
 # Source files. main.cpp is picked up automatically once you create it.
-SRCS = SATSolver.cpp $(wildcard main.cpp)
+SRCS = SATSolver.cpp DRAT.cpp $(wildcard main.cpp)
 OBJS = $(SRCS:.cpp=.o)
 
 # Header files (for dependency tracking)
-HDRS = SATSolver.hpp
+HDRS = SATSolver.hpp DRAT.hpp
 
 # Default rule: link once main.cpp exists, otherwise just compile what is here.
 ifeq ($(wildcard main.cpp),)
@@ -74,8 +74,8 @@ fuzz:
 	@$(MAKE) --no-print-directory clean
 	@$(MAKE) --no-print-directory fuzz-bin EXTRA="$(CHECKFLAGS)"
 
-fuzz-bin: SATSolver.o fuzz.o
-	$(CXX) $(CXXFLAGS) $(EXTRA) -o fuzz SATSolver.o fuzz.o
+fuzz-bin: SATSolver.o DRAT.o fuzz.o
+	$(CXX) $(CXXFLAGS) $(EXTRA) -o fuzz SATSolver.o DRAT.o fuzz.o
 
 # Optimized build: no -g, asserts compiled out. Use this for timing runs only.
 release:

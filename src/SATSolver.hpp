@@ -6,6 +6,7 @@
 #include <cmath>
 #include <cstdlib>
 #include <cstdint>
+#include "DRAT.hpp"
 
 using namespace std;
 
@@ -67,6 +68,8 @@ private:
 
     Stats stats;
 
+    DRAT drat;
+
     // Clause-deletion schedule, read from the environment in solve(). Unused
     // until deletion exists; plumbed now so the baseline records the schedule
     // it was taken under.
@@ -74,6 +77,7 @@ private:
     long long reduce_inc   = 300;    // SAT_REDUCE_INC
     long long check_every  = 0;      // SAT_CHECK_EVERY, 0 = off
     bool log_reduces       = false;  // SAT_LOG_REDUCES=1
+    string proof_path;               // SAT_PROOF, empty = no proof written
 
     void read_env();
 

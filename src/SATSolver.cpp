@@ -483,6 +483,7 @@ void SATSolver::reduceDB() {
 
     while (i < (int)clauses.size()) {
         if (doomed[i]) {
+            drat.del(clauses[i].lits);
             reason_remap[i] = -1;
 
             // Sum the lengths here: resize() destroys these clauses and their
@@ -536,8 +537,10 @@ void SATSolver::reduceDB() {
 
 bool SATSolver::solve(const string& filename) {
     read_env();
+    drat.open(proof_path);
     parse(filename);
     if (root_unsat) {
+        drat.finish();
         return false;
     }
 
@@ -564,13 +567,19 @@ bool SATSolver::solve(const string& filename) {
         }
 
         int conflict = propagate();
+
         if (conflict != -1) {
             stats.conflicts++;
-            if (decision_level() == 0) return false;
+            if (decision_level() == 0){
+                drat.finish();
+                return false;
+            } 
+
             vector<int> learnt = analyze(conflict, bt,lbd);
             cancel_until(bt);
 
             stats.learnts_total++;
+            drat.add(learnt);
 
             if (learnt.size() >= 2) {
                 clauses.push_back(Clause{learnt,lbd,int(stats.conflicts)});
@@ -588,6 +597,7 @@ bool SATSolver::solve(const string& filename) {
             }
             else {
                 enqueue(learnt[0],-1);
+                
             }
 
         }
@@ -628,6 +638,11 @@ void SATSolver::read_env() {
     reduce_first = env_ll("SAT_REDUCE_FIRST", 2000);
     reduce_inc   = env_ll("SAT_REDUCE_INC", 300);
     check_every  = env_ll("SAT_CHECK_EVERY", 0);
+
+    // Not env_ll: this one is a path, and an unset variable means "no proof"
+    // rather than a numeric default.
+    const char* pp = getenv("SAT_PROOF");
+    proof_path = (pp != nullptr) ? string(pp) : string();
     log_reduces  = env_ll("SAT_LOG_REDUCES", 0) != 0;
 }
 
