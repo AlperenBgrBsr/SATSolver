@@ -2,6 +2,10 @@
 
 using namespace std;
 
+// Defined with the invariant checker at the bottom of this file. Forward
+// declared so reduceDB() can assert the one thing its remap depends on.
+static void inv_fail(const char* where, const string& msg);
+
 int SATSolver::decision_level() {
     return (int)trail_lim.size();
 }
@@ -439,20 +443,94 @@ bool SATSolver::enqueue(int lit, int forcing_clause_idx) {
 
 void SATSolver::reduceDB() {
     vector<int> to_remove;
+    vector<char> doomed;
+    vector<int> reason_remap;
 
-    for (int i = num_problem_clauses; i < clauses.size(); i++) {
+    for (int i = num_problem_clauses; i < (int)clauses.size(); i++) {
         if (clauses[i].lbd <= 2 || reason[(clauses[i].lits[0]) >> 1] == i) {
             continue;
         }
         to_remove.push_back(i);
     }
 
+    doomed.assign(clauses.size(),0);
+    reason_remap.assign(clauses.size(),0);
+
+    // Identity everywhere to start with: a clause that does not move maps to
+    // itself. The sweep overwrites the learnt region; the problem-clause region
+    // keeps the identity, which is correct because those never move.
+    for (int i = 0; i < (int)reason_remap.size(); i++) {
+        reason_remap[i] = i;
+    }
+
     sort(to_remove.begin(), to_remove.end(), [this](const int& i, const int& j) {
-        if (clauses[i].lbd > clauses[j].lbd) {
+        if (clauses[i].lbd != clauses[j].lbd) {
             return clauses[i].lbd > clauses[j].lbd; // Primary sort
         }
         return clauses[i].touched < clauses[j].touched; // Secondary sort if primary is equal
     });
+
+    for (int i = 0; i < (int)(to_remove.size() >> 1); i++) {
+        doomed[to_remove[i]] = 1;
+    }
+
+    int i = num_problem_clauses;
+    int j = i;
+
+    long long removable    = (long long)to_remove.size();
+    long long deleted      = 0;
+    long long deleted_lits = 0;
+
+    while (i < (int)clauses.size()) {
+        if (doomed[i]) {
+            reason_remap[i] = -1;
+
+            // Sum the lengths here: resize() destroys these clauses and their
+            // literal counts go with them.
+            deleted++;
+            deleted_lits += (long long)clauses[i].lits.size();
+        }
+        else {
+            if (i != j) {
+                clauses[j] = std::move(clauses[i]);
+            }
+            reason_remap[i] = j;
+            j++;
+        }
+        i++;
+    }
+
+    clauses.resize(j);
+
+    for (int v = 0; v < var_count; v++) {
+        if (reason[v] != -1) {
+            // The one assumption the whole remap rests on: a clause that is
+            // some variable's reason was never a deletion candidate.
+            if (reason_remap[reason[v]] == -1) {
+                inv_fail("reduceDB", "var " + to_string(v) + " has reason "
+                                     + to_string(reason[v]) + ", which was deleted");
+            }
+
+            reason[v] = reason_remap[reason[v]];
+        }
+    }
+
+    watches.assign(2 * var_count,{});
+
+    for (int i = 0; i < (int)clauses.size(); i++) {
+        if (clauses[i].lits.size() < 2) {
+            continue;
+        }
+        watches[clauses[i].lits[0]].push_back(i);
+        watches[clauses[i].lits[1]].push_back(i);
+    }
+
+    stats.reduces++;
+    stats.deleted     += deleted;
+    stats.learnts     -= deleted;
+    stats.learnt_lits -= deleted_lits;
+
+    log_reduce(removable, deleted);
 }
 
 
