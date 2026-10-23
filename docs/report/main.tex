@@ -1,0 +1,45 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[margin=2.5cm]{geometry}
+\input{preamble}
+
+\title{Where a CDCL SAT Solver Spends Its Time:\\
+       Profiling, a Cycle-Level Cost Model, and a Controlled Comparison with MiniSat}
+\author{Alperen Buğra Başar \\ \small Bilkent University \\ \small \texttt{bugra.basar@ug.bilkent.edu.tr}}
+\date{{October 2026}}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+I study the performance of a CDCL SAT solver written from scratch in C++17. A
+sampling profile places half of its run time in one search loop, and four
+per-operation costs, fitted over \numModelRuns{} runs, predict its total cycles
+with a median error of \numModelMedianErr\%. A memory experiment that holds the
+search fixed while growing the footprint \numPadFootprint{} times locates the
+cost of leaving the L2 cache. A single run suggested the solver was 12 times
+faster than MiniSat; shuffled copies and removing MiniSat's features one at a
+time show that the real difference in conflicts is exactly its restarts and
+clause minimization. Every answer is checked independently, including a DRAT
+proof for every unsatisfiable result.
+\end{abstract}
+
+\input{sections/01-solver}
+\input{sections/02-method}
+\input{sections/03-profile}
+\input{sections/04-visits}
+\input{sections/05-costmodel}
+\input{sections/06-memory}
+\input{sections/07-minisat}
+\input{sections/08-complexity}
+\input{sections/09-roadmap}
+\input{sections/10-limitations}
+
+\FloatBarrier   % every float is placed before the references begin
+
+\bibliographystyle{plain}
+\bibliography{refs}
+
+\appendix
+\input{sections/appendix}
+
+\end{document}

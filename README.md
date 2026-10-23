@@ -11,6 +11,11 @@ against the formula on disk, unsatisfiability by a DRAT proof verified with
 
 ## Performance study: summary
 
+**Full report: [docs/report/performance-report.pdf](docs/report/performance-report.pdf)**
+(9 pages: methods, every table and figure, reproduction commands). One-page
+version: [docs/report/summary.pdf](docs/report/summary.pdf). The LaTeX source,
+with every figure drawn from the raw data, is in [docs/report/](docs/report).
+
 Measured on an Apple M3 Pro. Every number below comes from a script in
 [`tests/`](tests) with fixed seeds, and each run records its git commit, build
 flags and machine.

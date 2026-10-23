@@ -1,0 +1,32 @@
+\section{Reproducing the results}
+\label{app:repro}
+
+All commands run from the repository root after \texttt{cd src \&\& make
+release \&\& make bench-gen}. Each script writes a CSV whose header records its
+configuration, and \texttt{docs/report/make\_data.py} turns those files into
+every figure, table and number in this report.
+
+\begin{center}\small
+\begin{tabular}{ll}
+\toprule
+result & command \\
+\midrule
+regression and proofs & \texttt{cd src \&\& make test} \\
+fuzzing & \texttt{cd src \&\& make fuzz \&\& ./fuzz 15000} \\
+profile (Sec.~\ref{sec:profile}) & \texttt{sample <pid> 4 1 -file php.sample.txt} \\
+cost model (Sec.~\ref{sec:costmodel}) & \texttt{python3 tests/cost\_model.py collect} \\
+memory sweep (Sec.~\ref{sec:memory}) & \texttt{python3 tests/memory\_sweep.py run} \\
+latency ladder & \texttt{clang -O2 tests/latency\_ladder.c \&\& ./a.out} \\
+proof cost (Sec.~\ref{sec:solver}) & \texttt{python3 tests/proof\_cost.py --lrat} \\
+proof complexity (Sec.~\ref{sec:complexity}) & \texttt{python3 tests/proof\_complexity.py} \\
+report data & \texttt{python3 docs/report/make\_data.py} \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+The MiniSat comparison (Section~\ref{sec:minisat}) runs
+\texttt{tests/luck\_test.py tests/bench/php9\_8.cnf --seeds 1-50} six times:
+with and without \texttt{--no-flip}, each with default MiniSat, with
+\texttt{--minisat-flags "-rfirst=2147483647" --tag norestart}, and with
+\texttt{--minisat-flags "-rfirst=2147483647 -ccmin-mode=0" --tag
+norestart-nomin}.

@@ -1,0 +1,55 @@
+% The one-page summary: attach this one. Keep it to a single page.
+\documentclass[11pt,a4paper]{article}
+\usepackage[margin=2cm]{geometry}
+\input{preamble}
+\pagestyle{empty}
+
+\begin{document}
+
+\begin{center}
+{\Large\bfseries Where a CDCL SAT Solver Spends Its Time}\\[4pt]
+Alperen Buğra Başar \quad\textbullet\quad Bilkent University
+\quad\textbullet\quad \texttt{bugra.basar@ug.bilkent.edu.tr}\\
+\url{https://github.com/AlperenBgrBsr/SATSolver}
+\end{center}
+
+I wrote a CDCL SAT solver from scratch in C++17 and measured where its time
+goes, down to single instructions. Every answer it gives is checked
+independently: satisfying assignments against the formula, and
+unsatisfiability through a DRAT proof verified by \texttt{drat-trim}.
+
+\begin{itemize}[leftmargin=*, itemsep=3pt]
+  \item \textbf{A four-number cost model.} A skip costs \numCoefSkip{} cycles,
+        a search for a new watched literal \numCoefSearch{}, each literal it
+        checks \numCoefScan{}, and each conflict \numCoefConflict{}. Fitted
+        over \numModelRuns{} runs, these predict total cycles with a median
+        error of \numModelMedianErr\%.
+  \item \textbf{A result that did not survive control.} One run made the
+        solver look 12 times faster than MiniSat. Over 50 shuffled copies,
+        the comparison flipped with the signs of the literals, and removing
+        MiniSat's restarts and clause minimization made the two solvers
+        statistically indistinguishable (conflict ratio
+        \numGapNoflipNoRestartNoMin, 95\% interval spanning 1).
+  \item \textbf{Memory, with the search held fixed.} Padding every clause grew
+        the footprint \numPadFootprint{} times without changing a single
+        decision. The cost per visit stays flat while the data fits in L2 and
+        rises by \numPadSlowdown\% beyond it, only in code that reads the
+        padded data.
+  \item \textbf{Trust has a price, and it is small.} Proof logging adds
+        \numProofOverheadMin--\numProofOverheadMax\% cycles, and checking a
+        proof costs about as much as solving.
+\end{itemize}
+
+\begin{figure}[ht]
+\centering
+\plotfigure{figures/fig-ablation}
+\caption{Conflicts of MiniSat divided by conflicts of this solver, median over
+50 shuffled copies with 95\% intervals, as MiniSat's features are removed.}
+\end{figure}
+
+\noindent Limits: one machine, instances of at most 250 variables, and no
+hardware performance counters, so cache and branch claims are inferred from
+several independent measurements. The full report, with methods, data and
+reproduction commands, is in the repository.
+
+\end{document}

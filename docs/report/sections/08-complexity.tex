@@ -1,0 +1,13 @@
+\section{Which growth is the solver's fault?}
+\label{sec:complexity}
+
+Some growth is inherent. On pigeonhole formulas, the median number of
+conflicts over shuffled copies grows about 4.7 times per added pigeon, from
+724 on \inst{php7\_6} to 389{,}126 on \inst{php11\_10}, while the formula
+itself grows only like $n^{3.2}$. No CDCL solver can avoid this: every
+resolution proof of the pigeonhole principle is exponentially
+long~\cite{haken1985}, and a CDCL run is such a proof. The fullN family, all
+$2^n$ clauses over $n$ variables, is the opposite case. Removing any one clause
+makes it satisfiable, so every proof must use all $2^n$ clauses, and the
+solver needs exactly $2^{n-1}$ conflicts for every $n$ from 13 to 17: work
+linear in the size of the input, matching that lower bound up to a constant.

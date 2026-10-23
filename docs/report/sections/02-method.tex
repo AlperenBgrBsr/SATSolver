@@ -1,0 +1,37 @@
+\section{Method}
+\label{sec:method}
+
+All measurements come from one machine, an Apple M3 Pro whose performance
+cores run at 4.0\,GHz. A small pointer-chasing program measured what a load
+costs on it: about 4 cycles from the L1 cache (128\,KB), 15--36 cycles from L2
+(16\,MB) and 360--450 cycles from main memory, but only 4--8 cycles at any size
+when memory is read in order, because the processor then fetches the next data
+in advance. These numbers are the scale for every cost in this report.
+
+Timings use the optimized build of the solver (\texttt{-O2}, assertions off),
+and profiles use the same build with debug symbols added. Instead of seconds
+I report processor cycles and instructions, read from \texttt{/usr/bin/time},
+since cycles do not depend on the clock speed, and I keep the fastest of three
+runs. The solver also counts its own operations. These counts are identical on
+every run of the same input, so whenever a change should not affect the search
+(proof output, memory padding, the counters themselves) I checked that they
+stayed identical. The counters cost 3--4\% of the run time; my first version,
+which updated memory on every clause visit, cost 10\%.
+
+The solver is deterministic, but the same formula written differently
+(variables renamed, signs flipped, clauses reordered) can need twice as many
+conflicts, because the heuristics take a different path. I therefore compare
+configurations on shuffled copies of an instance, generated from fixed seeds,
+and in pairs: both configurations run on the same copy, so each copy's own
+difficulty cancels out in their ratio. A sign test and a Wilcoxon signed-rank
+test on the log ratios tell whether an effect is real, and a bootstrap 95\%
+confidence interval for the median ratio gives its size.
+
+Every experiment is a script that writes a CSV file recording the git commit,
+build flags, machine and command, and every figure, table and number in this
+report is generated from those files (Appendix~\ref{app:repro}). Three limits
+apply throughout. The processor's hardware event counters were not available
+(the installed Xcode was too old for the operating system), so statements
+about caches and branches are inferences from several independent
+measurements, not direct counts. There is a single machine. And all instances
+have at most 250 variables, so most of them fit in the L2 cache.

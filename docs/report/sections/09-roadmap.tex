@@ -1,0 +1,34 @@
+\section{What the measurements predict}
+\label{sec:roadmap}
+
+Each planned feature can now be given a measured expectation before it is
+built (Table~\ref{tab:roadmap}), so each one becomes a test of the model as
+well as an improvement.
+
+\begin{table}[ht]
+\centering\small
+\begin{tabular}{p{0.24\linewidth}p{0.68\linewidth}}
+\toprule
+next step & what the measurements predict \\
+\midrule
+restarts & less sensitivity to variable order and signs (the twofold shift
+           should shrink toward MiniSat's 1.1); not necessarily fewer
+           conflicts on pigeonhole \\
+clause minimization & learnt clauses about 19\% shorter and 13--27\% fewer
+           conflicts (Section~\ref{sec:minisat}) \\
+blocking literals & saves at most the cost of skips: 8--15\% of cycles on
+           pigeonhole, 4--19\% on random 3-SAT, up to 87\% on fullN; more once
+           data leaves L2 \\
+cheaper search & the largest target, 62--82\% of cycles on pigeonhole and
+           random 3-SAT; resuming the scan where the last one
+           stopped~\cite{gent2013watched} would shorten it \\
+VSIDS heap & no measurable effect at 250 variables; matters at $10^5$ \\
+arena storage & removes one pointer indirection per visit, the cost measured
+           in Section~\ref{sec:memory} \\
+binary DRAT & smaller proofs, less of the
+           \numProofOverheadMin--\numProofOverheadMax\% logging overhead \\
+\bottomrule
+\end{tabular}
+\caption{Measured expectations for the planned features.}
+\label{tab:roadmap}
+\end{table}

@@ -1,0 +1,44 @@
+% Figure 3: left, the latency ladder (data/ladder.csv); right, the padding
+% sweep against the in-L2 cost model (data/memory_*.csv).
+\begin{tikzpicture}
+\begin{axis}[
+    name=ladder,
+    width=0.47\linewidth, height=4.6cm,
+    xmode=log, ymode=log, log basis x=2,
+    xmin=12, xmax=700000, ymin=2, ymax=700,
+    xtick={16,128,1024,16384,524288},
+    xticklabels={16\,KB,128\,KB,1\,MB,16\,MB,512\,MB},
+    xlabel={buffer size}, ylabel={cycles per load},
+    legend style={at={(0.03,0.97)}, anchor=north west, font=\scriptsize},
+    tick label style={font=\scriptsize},
+]
+\addplot[thick, red!70!black, mark=*, mark size=1pt]
+    table[x=kb, y=random, col sep=comma] {data/ladder.csv};
+\addplot[thick, gray, mark=o, mark size=1pt]
+    table[x=kb, y=inorder, col sep=comma] {data/ladder.csv};
+\draw[dashed, gray] (axis cs:128,2) -- (axis cs:128,700);
+\draw[dashed, gray] (axis cs:16384,2) -- (axis cs:16384,700);
+\node[font=\scriptsize, anchor=south, rotate=90] at (axis cs:128,60) {L1};
+\node[font=\scriptsize, anchor=south, rotate=90] at (axis cs:16384,60) {L2};
+\legend{random chase, in-order walk}
+\end{axis}
+
+\begin{axis}[
+    at={(ladder.east)}, anchor=west, xshift=1.6cm,
+    width=0.47\linewidth, height=4.6cm,
+    xmode=log, xmin=1, xmax=300,
+    ymin=-3, ymax=11,
+    xlabel={estimated clause memory (MB)},
+    ylabel={extra cycles per clause visit},
+    legend style={at={(0.03,0.97)}, anchor=north west, font=\scriptsize},
+    tick label style={font=\scriptsize},
+]
+\addplot[thick, blue!70!black, mark=*, mark size=1.4pt]
+    table[x=estmb, y=excess, col sep=comma] {data/memory_php11_10.csv};
+\addplot[thick, green!50!black, mark=triangle*, mark size=1.8pt]
+    table[x=estmb, y=excess, col sep=comma] {data/memory_rand3_250_s3.csv};
+\draw[dashed, gray] (axis cs:16,-3) -- (axis cs:16,11);
+\draw[gray!60] (axis cs:1,0) -- (axis cs:300,0);
+\legend{\texttt{php11\_10}, \texttt{rand3\_250\_s3}}
+\end{axis}
+\end{tikzpicture}

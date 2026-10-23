@@ -1,0 +1,47 @@
+\section{The solver, and why its answers can be trusted}
+\label{sec:solver}
+
+This report studies the performance of a CDCL (conflict-driven clause
+learning) SAT solver that I wrote from scratch in C++17, with no external
+dependencies. It implements the core of a modern CDCL
+solver~\cite{marquessilva1999grasp,moskewicz2001chaff,een2003minisat}: two
+watched literals per clause, first-UIP clause learning, non-chronological
+backjumping, VSIDS branching with phase saving, clause deletion by
+LBD~\cite{audemard2009glucose}, and DRAT proof output. It does not yet have
+restarts, clause minimization, blocking literals, a heap for branching or
+arena clause storage; Section~\ref{sec:roadmap} uses the measurements to
+predict what each of these would bring.
+
+A fast wrong answer is worthless, so no result in this report relies on the
+solver's own word. A satisfying assignment is easy to check: the test harness
+re-reads the formula from disk and checks the assignment clause by clause. An
+unsatisfiable answer has no such short certificate, so the solver writes a
+DRAT proof, which \texttt{drat-trim}~\cite{wetzler2014drattrim} checks
+independently. The regression suite runs both checks on 1{,}010 instances, and
+a fuzzer compares 15{,}000 random formulas against exhaustive brute force,
+also with clause deletion forced to run early; there are no mismatches. An
+invariant checker guards the internal data structures, and it caught all six
+bugs I injected on purpose to test it.
+
+Verification has a price (Table~\ref{tab:proofcost}). Writing the proof costs
+\numProofOverheadMin--\numProofOverheadMax\% more cycles, and the overhead
+follows how much proof is written per unit of solving work (Spearman
+$\rho = 0.95$); proof logging never changes the search. Checking takes
+0.7--1.5 times the solving time on the pigeonhole and random instances, but
+9--27 times on the fullN family, which I have not investigated.
+\texttt{drat-trim} can also produce LRAT, the input format of the formally
+verified checker cake\_lpr~\cite{tan2021cakelpr}, so even the checker would
+not have to be trusted.
+
+\begin{table}[ht]
+\centering\small
+\begin{tabular}{lrrrrr}
+\toprule
+instance & conflicts & logging overhead & proof (MB) & check (s) & check / solve \\
+\midrule
+\input{tables/proof_cost}
+\end{tabular}
+\caption{Cost of an independently checked UNSAT answer. Overhead is extra
+cycles with proof logging on; every proof was verified by \texttt{drat-trim}.}
+\label{tab:proofcost}
+\end{table}

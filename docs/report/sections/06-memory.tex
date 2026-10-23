@@ -1,0 +1,61 @@
+\section{Memory and caches}
+\label{sec:memory}
+
+Two results above point to memory: the worst prediction of the cost model was
+the run with the largest clause database, and skips are cheapest on fullN. The
+second curve in Figure~\ref{fig:memory} (left) explains the latter. Reading
+memory in order costs 4--8 cycles at any size, and although \inst{full17} uses
+31\,MB, almost twice the L2, it creates its clauses one after another and
+mostly visits them in that order. Size alone does not make memory slow; size
+combined with a random access order does. Estimated from the data structures
+(32 bytes per clause object, 4 bytes per literal in a separate block, 8 bytes
+of watch entries), the clause data of \inst{php11\_10} takes about 4\,MB, well
+inside L2, so in the normal runs memory is not the bottleneck.
+
+\begin{figure}[ht]
+\centering
+\plotfigure{figures/fig-memory}
+\caption{Left: load latency on this machine, for a random pointer chase and an
+in-order walk. Right: extra cycles per clause visit beyond the in-L2 cost
+model, as clause padding grows the footprint with the search held fixed. The
+dashed line marks the 16\,MB L2.}
+\label{fig:memory}
+\end{figure}
+
+To isolate memory, I added a setting, \texttt{SAT\_CLAUSE\_PAD}, that reserves
+unused space after every clause's literals. The literals are untouched, so the
+search is identical (every counter was checked), while the footprint grows up
+to \numPadFootprint{} times, from 11 to 226\,MB on \inst{php11\_10}. Comparing
+each run with the cost model fitted only on in-L2 runs gives the extra cycles
+per visit caused by memory alone. They stay near zero up to an estimated
+15\,MB of clause data, rise between 15 and 40\,MB, where the latency curve
+leaves L2, and reach about 9 cycles at the largest padding, making each visit
+\numPadSlowdown\% more expensive (Figure~\ref{fig:memory}, right). That is far
+less than one main-memory access, about 450 cycles, because independent visits
+overlap their misses.
+
+\begin{table}[ht]
+\centering\small
+\begin{tabular}{lrrr}
+\toprule
+region of \texttt{propagate()} & pad 0 & pad 2048 & change \\
+\midrule
+\input{tables/region_shift}
+\end{tabular}
+\caption{Cycles per clause visit by code region on \inst{php11\_10}, same
+search, unpadded and padded. Only regions that read clause literals grow.}
+\label{tab:shift}
+\end{table}
+
+A profile of the padded run shows where the cost lands
+(Table~\ref{tab:shift}): only in code that reads the padded clause data. The
+watch-list walk and the watch move touch only memory the padding did not
+change, and they do not slow down, which makes them a control group inside the
+same measurement. Padding and a large clause database leave the cache in
+different ways. Padding spreads the same hot data over more memory pages, so
+the processor runs out of address-translation entries (the TLB), whereas with
+clause deletion turned off \inst{php11\_10} keeps 166{,}675 learnt clauses and
+really reads more data, at about 10 extra cycles per visit and 1.70
+instructions per cycle. Without miss counts, this conclusion rests on four
+signals that agree: the latency curve, the knee at the L2 size, the falling
+instructions per cycle, and the cost appearing only where padded data is read.

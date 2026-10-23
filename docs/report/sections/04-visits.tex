@@ -1,0 +1,39 @@
+\section{What a clause visit does}
+\label{sec:visits}
+
+Looking at one clause that watches a literal that has just become false is a
+\emph{clause visit}, the basic unit of work: \inst{php11\_10} performs 594
+million of them. A visit is a \emph{skip} if the clause is already satisfied,
+a \emph{move} if another non-false literal takes over the watch, \emph{unit}
+if the last literal is forced true, and a \emph{conflict} if that literal is
+false as well. Counting all four gives two exact checks, since they must add up
+to the number of visits and the conflict visits must equal the conflicts; both
+hold on every instance.
+
+\begin{table}[ht]
+\centering\small
+\begin{tabular}{lrrrrr}
+\toprule
+instance & skip (\%) & moved (\%) & unit (\%) & conflict (\%) & literals per search \\
+\midrule
+\input{tables/visit_outcomes}
+\end{tabular}
+\caption{Outcome of every clause visit at the default deletion schedule.}
+\label{tab:visits}
+\end{table}
+
+Most visits are skips, 56--97\% (Table~\ref{tab:visits}), yet on
+\inst{php11\_10} the skip path takes only about 10\% of the time: the quarter
+of visits that search for a new watch take half of the run. A search checks
+about 10.6 literals on \inst{php11\_10} but only 2.1 on
+\inst{rand3\_250\_s3}, which explains why the two profiles in
+Figure~\ref{fig:regions} differ. Between 87\% and 99\% of all visits go to
+learnt clauses, so the deletion policy decides how much work propagation has
+to do.
+
+One counter disproved an assumption. I expected the first check of each visit,
+whether the false literal sits in the first or the second watched position, to
+go either way about half the time. It is the first position only about 20\% of
+the time (2.5\% on \inst{full17}), because the previous visit usually leaves it
+in the second. That branch is therefore easy to predict, and the time around
+it is more likely spent waiting for the clause's literals to arrive.

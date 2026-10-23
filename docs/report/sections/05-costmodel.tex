@@ -1,0 +1,60 @@
+\section{A cycle-level cost model}
+\label{sec:costmodel}
+
+Can these counts explain the run time? If every kind of operation has a fixed
+cost, then
+\begin{equation}
+  \text{cycles} \approx a \cdot \text{skips} + b \cdot \text{searches}
+    + c \cdot \text{literals checked} + d \cdot \text{conflicts},
+\end{equation}
+where the searches are the visits that look for a new watch and the conflict
+term covers all per-conflict work: analysis, learning, backjumping and the
+next decision. I estimated $a$--$d$ by least squares on the relative error over
+\numModelRuns{} runs: three families, each under four clause-deletion
+schedules, from 0.1 to 26\,s. The schedules change the size of the clause
+database and with it the mix of operations, which is what lets the fit tell
+the four costs apart.
+
+The result (Table~\ref{tab:coef}) is \numCoefSkip{} cycles per skip,
+\numCoefSearch{} per search, \numCoefScan{} per literal checked and
+\numCoefConflict{} per conflict, and leaving out any single instance barely
+changes it. The model predicts the total cycles of a run with a median error of
+\numModelMedianErr\% (Figure~\ref{fig:costmodel}). The costs are also
+physically plausible. A skip is cheaper than a single L2 access, which is only
+possible because independent visits overlap; a search, about 14 skips, leaves
+room for a misprediction plus several dependent loads; and a conflict, about
+1.1\,$\mu$s, matches the profile's share for \texttt{analyze()}. The processor
+agrees independently: the family dominated by cheap skips runs at 5.0--5.6
+instructions per cycle (fullN), those dominated by searches at 1.6--2.3.
+
+On runs it was not fitted on, the model is less reliable. Fitted on pigeonhole
+and fullN only, it underpredicts every random 3-SAT run by 15--21\%, partly
+because both training families check 8--10 literals per search, so the fit
+cannot separate the cost per search from the cost per literal. Fitted on
+pigeonhole and random 3-SAT, it overpredicts fullN by 4--47\%, and more so the
+more skips a run contains: a skip costs about 9 cycles on those two families
+but about 6 on fullN, whose visits are almost all predictable skips over
+clauses read largely in order (Section~\ref{sec:memory}). The costs are
+accurate within the families they were fitted on, but they depend on the
+workload.
+
+\begin{table}[ht]
+\centering\small
+\begin{tabular}{lrc}
+\toprule
+cycles per & estimate & leave-one-instance-out range \\
+\midrule
+\input{tables/cost_coefficients}
+\end{tabular}
+\caption{Per-operation costs fitted over \numModelRuns{} runs.}
+\label{tab:coef}
+\end{table}
+
+\begin{figure}[ht]
+\centering
+\plotfigure{figures/fig-costmodel}
+\caption{Measured against predicted cycles for every run (median error
+\numModelMedianErr\%). The outlier below the line is \inst{php11\_10} with
+clause deletion off, the only run whose working data far exceeds L2.}
+\label{fig:costmodel}
+\end{figure}

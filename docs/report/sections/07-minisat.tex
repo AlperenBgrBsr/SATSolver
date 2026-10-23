@@ -1,0 +1,56 @@
+\section{Comparison with MiniSat}
+\label{sec:minisat}
+
+A single run made the solver look 12 times faster than
+MiniSat~\cite{een2003minisat}, with preprocessing off, on \inst{php11\_10}:
+5.4\,s against 65.6\,s. Splitting the run time into conflicts times cost per
+conflict shows why. MiniSat needed 42 times more conflicts, because its
+learnt-clause limit is sized from the formula and starts at about 200 clauses
+on this 561-clause instance, while its engine was 3.5 times faster per
+conflict. Raising that limit cuts its conflicts tenfold but makes each
+conflict 22 times more expensive, so the run gets slower: clause deletion is a
+trade-off, not a free gain.
+
+The comparison does not survive a luck control. Over 50 shuffled copies of
+\inst{php9\_8}, the number of conflicts varies about twofold for the same
+formula, and the result depends on the signs of the literals. MiniSat needs
+\numGapFlipFull{} times as many conflicts as this solver on copies with sign
+flips, but only \numGapNoflipFull{} times as many on copies without
+(Figure~\ref{fig:ablation}). Only solvers without restarts are sensitive to
+the signs (Figure~\ref{fig:luck}): with its restarts switched off, MiniSat
+shows the same twofold shift as this solver. Restarts protect a solver from an
+unlucky start~\cite{gomes2000heavytails,luby1993}.
+
+Removing MiniSat's features one at a time closes the gap. Without restarts,
+the ratio becomes \numGapFlipNoRestart{} and \numGapNoflipNoRestart{}; without
+restarts and clause minimization, it becomes \numGapFlipNoRestartNoMin{} and
+\numGapNoflipNoRestartNoMin{}, with confidence intervals that include 1. On
+this instance the whole difference in conflicts is these two features, and
+even the learnt clauses match: 24.4 and 26.3 literals for this solver, 24.9
+and 26.8 for MiniSat without minimization, whose clauses are about 19\%
+shorter with it. The
+remaining differences, including LBD against activity for ranking learnt
+clauses, made no measurable difference here; how many clauses are kept
+mattered far more than which ones. Two further observations stay open.
+MiniSat's preprocessing increased its conflicts by about 1.3 times, but only
+with restarts on, and the original \inst{php11\_10} file is a lucky case for
+this solver: 245{,}609 conflicts, against a median of 389{,}126 over shuffled
+copies.
+
+\begin{figure}[ht]
+\centering
+\plotfigure{figures/fig-ablation}
+\caption{Conflicts of MiniSat (no preprocessing) divided by conflicts of this
+solver, median over 50 shuffled copies of \inst{php9\_8} with 95\% bootstrap
+intervals. Removing restarts and clause minimization from MiniSat closes the
+gap for both kinds of copies.}
+\label{fig:ablation}
+\end{figure}
+
+\begin{figure}[ht]
+\centering
+\plotfigure{figures/fig-luck}
+\caption{Conflicts over 50 shuffled copies of \inst{php9\_8}, with and without
+sign flips. Only the solvers without restarts are sensitive to the signs.}
+\label{fig:luck}
+\end{figure}

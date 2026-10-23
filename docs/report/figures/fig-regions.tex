@@ -1,0 +1,17 @@
+% Figure 1: share of all samples per region of propagate(). data/regions.csv
+\input{tables/region_labels}
+\begin{tikzpicture}
+\begin{axis}[
+    xbar, width=0.7\linewidth, height=5cm,
+    bar width=5pt, enlarge y limits=0.1,
+    xmin=0, xmax=55,
+    xlabel={share of all samples (\%)},
+    regionticks, y tick label style={font=\small},
+    legend style={at={(0.98,0.04)}, anchor=south east, font=\small},
+    reverse legend,
+]
+\addplot table[x=rand, y=idx, col sep=comma] {data/regions.csv};
+\addplot table[x=php,  y=idx, col sep=comma] {data/regions.csv};
+\legend{\texttt{rand3\_250\_s3} (short clauses), \texttt{php11\_10} (long clauses)}
+\end{axis}
+\end{tikzpicture}

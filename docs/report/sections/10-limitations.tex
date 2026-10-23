@@ -1,0 +1,13 @@
+\section{Conclusion and open questions}
+\label{sec:limitations}
+
+The solver's run time is explained, to within a few percent, by four
+per-operation costs, and on a hard combinatorial instance its gap to MiniSat
+is exactly two missing features. The most useful lesson was about method: the
+first comparison suggested a twelvefold advantage, and only shuffled copies,
+paired statistics and removing features one at a time showed what that number
+was made of. Three questions remain open: why preprocessing hurts MiniSat only
+when restarts are on, which an experiment varying the restart interval could
+answer; why proof checking is so slow on fullN; and whether ranking clauses by
+LBD pays off on structured industrial instances, which the benchmark set here
+does not contain.

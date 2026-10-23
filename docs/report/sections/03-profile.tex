@@ -1,0 +1,38 @@
+\section{Where the time goes}
+\label{sec:profile}
+
+I profiled with \texttt{sample}, the macOS profiler, which records the running
+instruction once per millisecond; a run of \inst{php11\_10} gives about
+3{,}400 samples, so a share is accurate to about $\pm 1$ percentage point. On
+that instance \texttt{propagate()} takes \numPropagateShare\% of the run and
+\texttt{analyze()} \numAnalyzeShare\%; everything else is below 1\%. Cheap is
+not the same as unimportant, though: clause deletion takes almost no time
+itself, yet it made \inst{php11\_10} 4.4 times faster by keeping the clause
+database small.
+
+Inside \texttt{propagate()}, about half of the whole run goes into searching a
+clause for a new literal to watch after one of its watched literals has become
+false (Figure~\ref{fig:regions}), and one instruction alone receives 37\% of
+all samples. A sample lands on the instruction the processor is \emph{waiting
+at}, not on the one that caused the wait, an effect called skid. The hot
+instruction is a cheap load from L1, reachable only by a jump from the check
+that ends the search loop. That check depends on the current assignment and is
+hard to predict, and after a wrong guess the processor restarts exactly there.
+This points to branch mispredictions, a hypothesis I cannot confirm without
+hardware counters.
+
+The random instance supports it. Its learnt clauses are shorter, so a search
+checks about 2 literals instead of 10: the loop body shrinks from 8\% to
+1.5\% of the run, but the loop exit stays expensive, so the cost is paid per
+search, not per literal. Moving a watch, a store to an essentially random
+address, costs only 2.4\%, because the processor waits for loads but not for
+stores.
+
+\begin{figure}[ht]
+\centering
+\plotfigure{figures/fig-regions}
+\caption{Share of all profile samples in each part of \texttt{propagate()}.
+Long learnt clauses (pigeonhole) make the search for a new watch dominant;
+short ones (random 3-SAT) shift weight to the fixed cost of each visit.}
+\label{fig:regions}
+\end{figure}

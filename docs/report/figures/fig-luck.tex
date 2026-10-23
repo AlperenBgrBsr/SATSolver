@@ -1,0 +1,31 @@
+% Figure 5: conflicts over 50 shuffled copies of php9_8, per solver and
+% orientation. data/luck.csv
+% Boxes are grouped in pairs (with flips, without) per solver; the solver
+% names sit under each pair, the orientation under each box.
+\begin{tikzpicture}
+\begin{axis}[
+    width=0.92\linewidth, height=4.6cm,
+    boxplot/draw direction=y,
+    boxplot/box extend=0.55,
+    ymode=log, ymin=5000, ymax=60000,
+    ytick={5000,10000,20000,40000},
+    yticklabels={5\,000,10\,000,20\,000,40\,000},
+    ylabel={conflicts},
+    xmin=0.4, xmax=8.6,
+    xtick={1,2,4,5,7,8},
+    xticklabels={flips, no flips, flips, no flips, flips, no flips},
+    x tick label style={font=\scriptsize},
+    clip=false,
+]
+\addplot+[boxplot={draw position=1}, blue!70!black]   table[y=sat_flip,           col sep=comma] {data/luck.csv};
+\addplot+[boxplot={draw position=2}, blue!70!black]   table[y=sat_noflip,         col sep=comma] {data/luck.csv};
+\addplot+[boxplot={draw position=4}, gray]            table[y=ms_flip,            col sep=comma] {data/luck.csv};
+\addplot+[boxplot={draw position=5}, gray]            table[y=ms_noflip,          col sep=comma] {data/luck.csv};
+\addplot+[boxplot={draw position=7}, orange!85!black] table[y=msnorestart_flip,   col sep=comma] {data/luck.csv};
+\addplot+[boxplot={draw position=8}, orange!85!black] table[y=msnorestart_noflip, col sep=comma] {data/luck.csv};
+% solver names under each pair, below the orientation labels
+\node[font=\small, anchor=north, yshift=-13pt] at (axis cs:1.5,5000) {this solver};
+\node[font=\small, anchor=north, yshift=-13pt] at (axis cs:4.5,5000) {MiniSat};
+\node[font=\small, anchor=north, yshift=-13pt] at (axis cs:7.5,5000) {MiniSat, no restarts};
+\end{axis}
+\end{tikzpicture}
