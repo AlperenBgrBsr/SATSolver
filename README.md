@@ -32,8 +32,9 @@ flags and machine.
 - **A headline result that did not survive control.** A single run made the
   solver look 12× faster than MiniSat on `php11_10`. Splitting runtime into
   conflicts × cost per conflict showed why: MiniSat's learnt-clause limit,
-  sized from the formula, forced 42× more conflicts, while its engine was 3.5×
-  faster per conflict. Over 50 shuffled copies of `php9_8`, the comparison
+  sized from the formula, forced 42× more conflicts. Its conflicts were 3.5×
+  cheaper, but only because it kept so few clauses; given a database at least
+  as large as this solver's, it was 6× slower per conflict. Over 50 shuffled copies of `php9_8`, the comparison
   depends on literal polarity alone (1.51× ahead against 0.78× behind). With
   restarts and clause minimization switched off in MiniSat, the two solvers
   become statistically indistinguishable (conflict ratio 1.06, 95% CI

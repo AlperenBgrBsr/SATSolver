@@ -51,11 +51,16 @@ A profile of the padded run shows where the cost lands
 (Table~\ref{tab:shift}): only in code that reads the padded clause data. The
 watch-list walk and the watch move touch only memory the padding did not
 change, and they do not slow down, which makes them a control group inside the
-same measurement. Padding and a large clause database leave the cache in
-different ways. Padding spreads the same hot data over more memory pages, so
-the processor runs out of address-translation entries (the TLB), whereas with
-clause deletion turned off \inst{php11\_10} keeps 166{,}675 learnt clauses and
-really reads more data, at about 10 extra cycles per visit and 1.70
-instructions per cycle. Without miss counts, this conclusion rests on four
-signals that agree: the latency curve, the knee at the L2 size, the falling
-instructions per cycle, and the cost appearing only where padded data is read.
+same measurement. Padding and a large clause database may leave the cache in
+different ways. Padding spreads the same hot data over more memory pages; one
+plausible explanation of its cost is that the processor runs out of
+address-translation entries (the TLB) rather than out of cache, but these
+measurements cannot tell TLB misses from cache misses. With clause deletion
+turned off, by contrast, \inst{php11\_10} keeps 166{,}675 learnt clauses and
+genuinely reads more data, at about 10 extra cycles per visit and 1.70
+instructions per cycle. Without miss counts, four signals agree: the latency
+curve, the knee at the L2 size, the falling instructions per cycle, and the
+cost appearing only where padded data is read. Together they show that memory
+becomes more expensive beyond L2, but not which structure is responsible; a
+pointer chase that touches one cache line per page would measure the TLB's
+reach and separate the two.

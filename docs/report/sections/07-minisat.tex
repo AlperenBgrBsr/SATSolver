@@ -3,13 +3,20 @@
 
 A single run made the solver look 12 times faster than
 MiniSat~\cite{een2003minisat}, with preprocessing off, on \inst{php11\_10}:
-5.4\,s against 65.6\,s. Splitting the run time into conflicts times cost per
+5.4\,s against 65.6\,s. Splitting the run time into conflicts and cost per
 conflict shows why. MiniSat needed 42 times more conflicts, because its
-learnt-clause limit is sized from the formula and starts at about 200 clauses
-on this 561-clause instance, while its engine was 3.5 times faster per
-conflict. Raising that limit cuts its conflicts tenfold but makes each
-conflict 22 times more expensive, so the run gets slower: clause deletion is a
-trade-off, not a free gain.
+learnt-clause limit is sized from the formula: it starts at about 200 clauses
+on this 561-clause instance, while this solver keeps up to 23{,}000. Each of
+MiniSat's conflicts was 3.5 times cheaper, but that does not show a faster
+engine, since with so few clauses there is far less to visit per conflict.
+Raising MiniSat's limit to 20{,}000 cut its conflicts tenfold but made each
+one 22 times more expensive: at 137\,$\mu$s against this solver's 22\,$\mu$s,
+it was then six times \emph{slower} per conflict, while holding 23{,}000 to
+74{,}000 clauses. Cost per conflict therefore mostly reflects the size of the
+clause database, not the efficiency of the engine. A fair engine comparison
+would need the cost per clause visit at an equal database size, which MiniSat
+does not report. Clause deletion is a trade-off: fewer clauses make each
+conflict cheaper, but there are more conflicts.
 
 The comparison does not survive a luck control. Over 50 shuffled copies of
 \inst{php9\_8}, the number of conflicts varies about twofold for the same
