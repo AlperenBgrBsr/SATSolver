@@ -198,6 +198,14 @@ void SATSolver::cancel_until(int lvl) {
     qhead = (int)trail.size();
 }
 
+// Memory-layout experiment, inert at the default of 0. Reserving spare
+// capacity leaves the literals untouched, so the search is bit-for-bit the
+// same - only the clause's footprint grows, spreading clauses further apart.
+// The capacity survives reduceDB: std::move hands the buffer over whole.
+void SATSolver::pad_clause(Clause& c) {
+    if (clause_pad > 0) c.lits.reserve(c.lits.size() + (size_t)clause_pad);
+}
+
 void SATSolver::add_clause(vector<int>& lits) {
     if (lits.empty()) {
         cout << "UNSAT" << endl;
@@ -205,6 +213,7 @@ void SATSolver::add_clause(vector<int>& lits) {
     }
 
     clauses.push_back(Clause{lits});
+    pad_clause(clauses.back());
 
     if (lits.size() == 1) {
         if (!enqueue(lits[0], -1)) root_unsat = true;
@@ -363,24 +372,43 @@ int SATSolver::propagate() {
         int i = 0;
         int j = 0;
 
+        // Visit counters live in locals for one watch list and are added to
+        // stats once per list. Incrementing stats.* directly costs a memory
+        // read-modify-write per visit - the compiler cannot keep a member in
+        // a register across push_back - and measured at 7-9% of runtime.
+        long long n_skip = 0, n_moved = 0, n_unit = 0;
+        long long n_scan = 0, n_swaps = 0, n_learnt = 0;
+        auto flush_counts = [&]() {
+            stats.visit_skip    += n_skip;
+            stats.visit_moved   += n_moved;
+            stats.visit_unit    += n_unit;
+            stats.scan_lits     += n_scan;
+            stats.watch_swaps   += n_swaps;
+            stats.learnt_visits += n_learnt;
+        };
+
         while (i < (int)idxs.size()) {
             int current_idx = idxs[i++];
             Clause& current_clause = clauses[current_idx];
 
             stats.clause_visits++;
+            n_learnt += current_idx >= num_problem_clauses;
 
             if (current_clause.lits[0] == false_lit) {
                 swap(current_clause.lits[0], current_clause.lits[1]);
+                n_swaps++;
             }
 
             if (value(current_clause.lits[0]) == 1) {
+                n_skip++;
                 idxs[j++] = current_idx;
                 continue;
             }
 
             bool replacement_found = false;
+            int k = 2;
 
-            for (int k = 2; k < (int)current_clause.lits.size(); k++) {
+            for (; k < (int)current_clause.lits.size(); k++) {
                 if (value(current_clause.lits[k]) != 0) {
                     replacement_found = true;
                     swap(current_clause.lits[1], current_clause.lits[k]);
@@ -389,13 +417,20 @@ int SATSolver::propagate() {
                 }
             }
 
+            // Counted from k after the loop rather than once per iteration,
+            // which would put a counter update inside the hottest loop.
+            n_scan += replacement_found ? k - 1 : k - 2;
+
             if (replacement_found) {
+                n_moved++;
                 continue;
             }
 
             idxs[j++] = current_idx;
 
             if (value(current_clause.lits[0]) == 0) {
+                stats.visit_conflict++;
+                flush_counts();
                 while (i < (int)idxs.size()) {
                     idxs[j++] = idxs[i++];
                 }
@@ -404,7 +439,9 @@ int SATSolver::propagate() {
                 return current_idx;
             }
             else {
+                n_unit++;
                 if (!enqueue(current_clause.lits[0], current_idx)) {
+                    flush_counts();
                     while (i < (int)idxs.size()) {
                         idxs[j++] = idxs[i++];
                     }
@@ -415,6 +452,7 @@ int SATSolver::propagate() {
             }
         }
 
+        flush_counts();
         idxs.resize(j);
     }
 
@@ -579,10 +617,12 @@ bool SATSolver::solve(const string& filename) {
             cancel_until(bt);
 
             stats.learnts_total++;
+            stats.learnt_lits_born += (long long)learnt.size();
             drat.add(learnt);
 
             if (learnt.size() >= 2) {
                 clauses.push_back(Clause{learnt,lbd,int(stats.conflicts)});
+                pad_clause(clauses.back());
                 int idx = clauses.size() - 1;
                 watches[learnt[0]].push_back(idx);
                 watches[learnt[1]].push_back(idx);
@@ -644,6 +684,7 @@ void SATSolver::read_env() {
     const char* pp = getenv("SAT_PROOF");
     proof_path = (pp != nullptr) ? string(pp) : string();
     log_reduces  = env_ll("SAT_LOG_REDUCES", 0) != 0;
+    clause_pad   = env_ll("SAT_CLAUSE_PAD", 0);
 }
 
 // One line per reduce. The exit-time totals say where the database ended up;
@@ -683,6 +724,14 @@ void SATSolver::print_stats(ostream& os) const {
     os << "c learnt_lits    " << stats.learnt_lits << "\n";
     os << "c reduces        " << stats.reduces << "\n";
     os << "c deleted        " << stats.deleted << "\n";
+    os << "c visit_skip     " << stats.visit_skip << "\n";
+    os << "c visit_moved    " << stats.visit_moved << "\n";
+    os << "c visit_unit     " << stats.visit_unit << "\n";
+    os << "c visit_conflict " << stats.visit_conflict << "\n";
+    os << "c scan_lits      " << stats.scan_lits << "\n";
+    os << "c watch_swaps    " << stats.watch_swaps << "\n";
+    os << "c learnt_visits  " << stats.learnt_visits << "\n";
+    os << "c learnt_lits_born " << stats.learnt_lits_born << "\n";
     os << "c reduce_first   " << reduce_first << "\n";
     os << "c reduce_inc     " << reduce_inc << "\n";
 

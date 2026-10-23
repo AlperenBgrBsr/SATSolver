@@ -42,6 +42,19 @@ private:
         long long lbd_birth_sum = 0;   // sum of birth LBDs, for the mean
 
         long long lbd_birth_hist[LBD_BUCKETS] = {};
+
+        // Clause-visit outcomes in propagate(). Every visit ends in exactly
+        // one of the four, so they must sum to clause_visits - counting all
+        // four rather than deriving one is what makes that a check.
+        long long visit_skip     = 0;   // lits[0] already true, watch kept
+        long long visit_moved    = 0;   // replacement found, watch moved
+        long long visit_unit     = 0;   // no replacement, lits[0] enqueued
+        long long visit_conflict = 0;   // no replacement, lits[0] false
+
+        long long scan_lits      = 0;   // literals checked in replacement searches
+        long long watch_swaps    = 0;   // falsified watch was lits[0], swapped
+        long long learnt_visits  = 0;   // visits to learnt, not problem, clauses
+        long long learnt_lits_born = 0; // literals over every learnt clause at birth
     };
 
     int qhead = 0;
@@ -77,6 +90,7 @@ private:
     long long reduce_inc   = 300;    // SAT_REDUCE_INC
     long long check_every  = 0;      // SAT_CHECK_EVERY, 0 = off
     bool log_reduces       = false;  // SAT_LOG_REDUCES=1
+    long long clause_pad   = 0;      // SAT_CLAUSE_PAD: spare ints reserved per clause
     string proof_path;               // SAT_PROOF, empty = no proof written
 
     void read_env();
@@ -84,6 +98,7 @@ private:
     void resize_all(int n);
     void parse(const string& filename);
     void add_clause(vector<int>& lits);
+    void pad_clause(Clause& c);
     int dimacs_cnf_to_lit(int dimacs_val);
 
     int value(int lit);

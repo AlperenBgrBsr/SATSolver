@@ -7,10 +7,6 @@
 
 using namespace std;
 
-// DRAT proof emitter. One clause per line, DIMACS literals terminated by 0:
-// additions bare, deletions prefixed "d ", and the proof closed by the empty
-// clause. Inert unless open() is handed a non-empty path, so a run without
-// SAT_PROOF set pays nothing.
 class DRAT {
     public:
         void open(const string& path);

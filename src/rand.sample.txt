@@ -1,0 +1,156 @@
+Analysis of sampling sat-prof (pid 87237) every 1 millisecond
+Process:         sat-prof [87237]
+Path:            /Users/USER/Desktop/*/sat-prof
+Load Address:    0x100d5c000
+Identifier:      sat-prof
+Version:         0
+Code Type:       ARM64
+Platform:        macOS
+Parent Process:  zsh [59910]
+Target Type:     live task
+
+Date/Time:       2026-10-23 19:08:51.395 +0300
+Launch Time:     2026-10-23 19:08:51.294 +0300
+OS Version:      macOS 26.5.1 (25F80)
+Report Version:  7
+Analysis Tool:   /usr/bin/sample
+
+Physical footprint:         4960K
+Physical footprint (peak):  4960K
+Idle exit:                  untracked
+----
+
+Call graph:
+    851 Thread_72174931   DispatchQueue_1: com.apple.main-thread  (serial)
+      851 start  (in dyld) + 6992  [0x1801dbe00]
+        851 main  (in sat-prof) + 360  [0x100d6a314]  main.cpp:13
+          757 SATSolver::solve(std::basic_string<char> const&)  (in sat-prof) + 272  [0x100d63c84]  SATSolver.cpp:569
+          + 155 SATSolver::propagate()  (in sat-prof) + 468  [0x100d62a00]  SATSolver.cpp:386
+          + 144 SATSolver::propagate()  (in sat-prof) + 320,284,...  [0x100d6296c,0x100d62948,...]  SATSolver.cpp:0
+          + 122 SATSolver::propagate()  (in sat-prof) + 276  [0x100d62940]  SATSolver.cpp:373
+          + 109 SATSolver::propagate()  (in sat-prof) + 380  [0x100d629a8]  SATSolver.cpp:383
+          + 70 SATSolver::propagate()  (in sat-prof) + 192  [0x100d628ec]  SATSolver.cpp:377
+          + 53 SATSolver::propagate()  (in sat-prof) + 220,204,...  [0x100d62908,0x100d628f8,...]  SATSolver.cpp:366
+          + 27 SATSolver::propagate()  (in sat-prof) + 296,292,...  [0x100d62954,0x100d62950,...]  SATSolver.cpp:376
+          + 23 SATSolver::propagate()  (in sat-prof) + 264,268  [0x100d62934,0x100d62938]  SATSolver.cpp:372
+          + 19 SATSolver::propagate()  (in sat-prof) + 508,500  [0x100d62a28,0x100d62a20]  SATSolver.cpp:387
+          + 13 SATSolver::propagate()  (in sat-prof) + 360,352  [0x100d62994,0x100d6298c]  SATSolver.cpp:384
+          + 11 SATSolver::propagate()  (in sat-prof) + 392  [0x100d629b4]  SATSolver.cpp:396
+          + 3 SATSolver::propagate()  (in sat-prof) + 76,72  [0x100d62878,0x100d62874]  SATSolver.cpp:355
+          + 2 SATSolver::propagate()  (in sat-prof) + 408  [0x100d629c4]  SATSolver.cpp:398
+          + 2 SATSolver::propagate()  (in sat-prof) + 964,1048  [0x100d62bf0,0x100d62c44]  SATSolver.cpp:399
+          + 1 SATSolver::propagate()  (in sat-prof) + 240  [0x100d6291c]  SATSolver.cpp:368
+          + 1 SATSolver::propagate()  (in sat-prof) + 248  [0x100d62924]  SATSolver.cpp:370
+          + 1 SATSolver::propagate()  (in sat-prof) + 440  [0x100d629e4]  SATSolver.cpp:407
+          + ! 1 SATSolver::enqueue(int, int)  (in sat-prof) + 116  [0x100d610b8]  SATSolver.cpp:439
+          + 1 SATSolver::propagate()  (in sat-prof) + 916  [0x100d62bc0]  vector:0
+          59 SATSolver::solve(std::basic_string<char> const&)  (in sat-prof) + 336  [0x100d63cc4]  SATSolver.cpp:578
+          + 12 SATSolver::analyze(int, int&, int&)  (in sat-prof) + 1464,1680,...  [0x100d5feec,0x100d5ffc4,...]  SATSolver.cpp:0
+          + 9 SATSolver::analyze(int, int&, int&)  (in sat-prof) + 1620,1560,...  [0x100d5ff88,0x100d5ff4c,...]  SATSolver.cpp:94
+          + 7 SATSolver::analyze(int, int&, int&)  (in sat-prof) + 1696  [0x100d5ffd4]  SATSolver.cpp:103
+          + 5 SATSolver::analyze(int, int&, int&)  (in sat-prof) + 1500  [0x100d5ff10]  SATSolver.cpp:80
+          + 4 SATSolver::analyze(int, int&, int&)  (in sat-prof) + 1716  [0x100d5ffe8]  SATSolver.cpp:107
+          + 3 SATSolver::analyze(int, int&, int&)  (in sat-prof) + 2528  [0x100d60314]  SATSolver.cpp:117
+          + ! 2 operator new(unsigned long)  (in libc++abi.dylib) + 52  [0x1805507e8]
+          + ! : 1 <deduplicated_symbol>  (in libsystem_malloc.dylib) + 112  [0x1803b6144]
+          + ! : 1 _xzm_xzone_malloc  (in libsystem_malloc.dylib) + 32  [0x1803b68e0]
+          + ! 1 DYLD-STUB$$operator new(unsigned long)  (in sat-prof) + 4  [0x100d6ac40]
+          + 3 SATSolver::analyze(int, int&, int&)  (in sat-prof) + 1640  [0x100d5ff9c]  SATSolver.cpp:95
+          + 2 SATSolver::analyze(int, int&, int&)  (in sat-prof) + 1768  [0x100d6001c]  SATSolver.cpp:111
+          + 2 SATSolver::analyze(int, int&, int&)  (in sat-prof) + 2720  [0x100d603d4]  SATSolver.cpp:117
+          + ! 1 DYLD-STUB$$free  (in libc++abi.dylib) + 8  [0x180550bd8]
+          + ! 1 _xzm_free  (in libsystem_malloc.dylib) + 320  [0x1803b71ac]
+          + 2 SATSolver::analyze(int, int&, int&)  (in sat-prof) + 2444,2684  [0x100d602c0,0x100d603b0]  SATSolver.cpp:117
+          + 2 SATSolver::analyze(int, int&, int&)  (in sat-prof) + 2772  [0x100d60408]  SATSolver.cpp:121
+          + 2 SATSolver::analyze(int, int&, int&)  (in sat-prof) + 2912  [0x100d60494]  SATSolver.cpp:136
+          + ! 1 std::vector<int>::insert(std::__wrap_iter<int const*>, int const&)  (in sat-prof) + 56  [0x100d60714]  vector:1567
+          + ! 1 std::vector<int>::insert(std::__wrap_iter<int const*>, int const&)  (in sat-prof) + 768  [0x100d609dc]  vector:1571
+          + !   1 _platform_memmove  (in libsystem_platform.dylib) + 668  [0x1805a35fc]
+          + 2 SATSolver::analyze(int, int&, int&)  (in sat-prof) + 2980  [0x100d604d8]  SATSolver.cpp:144
+          + 2 SATSolver::analyze(int, int&, int&)  (in sat-prof) + 1668  [0x100d5ffb8]  SATSolver.cpp:98
+          + 1 SATSolver::analyze(int, int&, int&)  (in sat-prof) + 1876  [0x100d60088]  SATSolver.cpp:114
+          + 1 SATSolver::analyze(int, int&, int&)  (in sat-prof) + 3112  [0x100d6055c]  SATSolver.cpp:164
+          21 SATSolver::solve(std::basic_string<char> const&)  (in sat-prof) + 560,556,...  [0x100d63da4,0x100d63da0,...]  SATSolver.cpp:605
+          7 SATSolver::solve(std::basic_string<char> const&)  (in sat-prof) + 348  [0x100d63cd0]  SATSolver.cpp:579
+          + 2 SATSolver::cancel_until(int)  (in sat-prof) + 140  [0x100d60ad4]  SATSolver.cpp:193
+          + 1 SATSolver::cancel_until(int)  (in sat-prof) + 112  [0x100d60ab8]  SATSolver.cpp:190
+          + 1 SATSolver::cancel_until(int)  (in sat-prof) + 120  [0x100d60ac0]  SATSolver.cpp:191
+          + 1 SATSolver::cancel_until(int)  (in sat-prof) + 128  [0x100d60ac8]  SATSolver.cpp:192
+          + 1 SATSolver::cancel_until(int)  (in sat-prof) + 156  [0x100d60ae4]  SATSolver.cpp:196
+          + 1 SATSolver::cancel_until(int)  (in sat-prof) + 232  [0x100d60b30]  SATSolver.cpp:197
+          4 SATSolver::solve(std::basic_string<char> const&)  (in sat-prof) + 200  [0x100d63c3c]  SATSolver.cpp:560
+          + 2 SATSolver::reduceDB()  (in sat-prof) + 792  [0x100d63094]  SATSolver.cpp:466
+          + ! 2 std::__introsort<std::_ClassicAlgPolicy, SATSolver::reduceDB()::$_0&, int*, false>(int*, int*, SATSolver::reduceDB()::$_0&, std::iterator_traits<int*>::difference_type, bool)  (in sat-prof) + 932  [0x100d68fe0]  sort.h:865
+          + !   2 std::__introsort<std::_ClassicAlgPolicy, SATSolver::reduceDB()::$_0&, int*, false>(int*, int*, SATSolver::reduceDB()::$_0&, std::iterator_traits<int*>::difference_type, bool)  (in sat-prof) + 932  [0x100d68fe0]  sort.h:865
+          + !     2 std::__introsort<std::_ClassicAlgPolicy, SATSolver::reduceDB()::$_0&, int*, false>(int*, int*, SATSolver::reduceDB()::$_0&, std::iterator_traits<int*>::difference_type, bool)  (in sat-prof) + 932  [0x100d68fe0]  sort.h:865
+          + !       2 std::__introsort<std::_ClassicAlgPolicy, SATSolver::reduceDB()::$_0&, int*, false>(int*, int*, SATSolver::reduceDB()::$_0&, std::iterator_traits<int*>::difference_type, bool)  (in sat-prof) + 932  [0x100d68fe0]  sort.h:865
+          + !         1 std::__introsort<std::_ClassicAlgPolicy, SATSolver::reduceDB()::$_0&, int*, false>(int*, int*, SATSolver::reduceDB()::$_0&, std::iterator_traits<int*>::difference_type, bool)  (in sat-prof) + 672  [0x100d68edc]  sort.h:845
+          + !         1 std::__introsort<std::_ClassicAlgPolicy, SATSolver::reduceDB()::$_0&, int*, false>(int*, int*, SATSolver::reduceDB()::$_0&, std::iterator_traits<int*>::difference_type, bool)  (in sat-prof) + 932  [0x100d68fe0]  sort.h:865
+          + !           1 std::__introsort<std::_ClassicAlgPolicy, SATSolver::reduceDB()::$_0&, int*, false>(int*, int*, SATSolver::reduceDB()::$_0&, std::iterator_traits<int*>::difference_type, bool)  (in sat-prof) + 932  [0x100d68fe0]  sort.h:865
+          + !             1 std::__introsort<std::_ClassicAlgPolicy, SATSolver::reduceDB()::$_0&, int*, false>(int*, int*, SATSolver::reduceDB()::$_0&, std::iterator_traits<int*>::difference_type, bool)  (in sat-prof) + 656  [0x100d68ecc]  sort.h:845
+          + 1 SATSolver::reduceDB()  (in sat-prof) + 124  [0x100d62df8]  SATSolver.cpp:453
+          + 1 SATSolver::reduceDB()  (in sat-prof) + 1188  [0x100d63220]  SATSolver.cpp:504
+          +   1 _xzm_free  (in libsystem_malloc.dylib) + 352  [0x1803b71cc]
+          +     1 __bzero  (in libsystem_platform.dylib) + 24  [0x1805a3048]
+          1 SATSolver::solve(std::basic_string<char> const&)  (in sat-prof) + 416  [0x100d63d14]  SATSolver.cpp:585
+          + 1 operator new(unsigned long)  (in libc++abi.dylib) + 52  [0x1805507e8]
+          +   1 _xzm_xzone_thread_cache_fill_and_malloc  (in libsystem_malloc.dylib) + 120  [0x1803bd5d0]
+          1 SATSolver::solve(std::basic_string<char> const&)  (in sat-prof) + 820  [0x100d63ea8]  SATSolver.cpp:587
+          1 SATSolver::solve(std::basic_string<char> const&)  (in sat-prof) + 1572  [0x100d64198]  SATSolver.cpp:596
+
+Total number in stack (recursive counted multiple, when >=5):
+        6       std::__introsort<std::_ClassicAlgPolicy, SATSolver::reduceDB()::$_0&, int*, false>(int*, int*, SATSolver::reduceDB()::$_0&, std::iterator_traits<int*>::difference_type, bool)  (in sat-prof) + 932  [0x100d68fe0]  sort.h:865
+
+Sort by top of stack, same collapsed (when >= 5):
+        SATSolver::propagate()  (in sat-prof)        756
+        SATSolver::analyze(int, int&, int&)  (in sat-prof)        52
+        SATSolver::solve(std::basic_string<char> const&)  (in sat-prof)        23
+        SATSolver::cancel_until(int)  (in sat-prof)        7
+
+Binary Images:
+       0x100d5c000 -        0x100d6bfff +sat-prof (0) <B123242F-4402-3092-B727-122BCD31AABB> /Users/*/Desktop/*/sat-prof
+       0x180134000 -        0x180186b4b  libobjc.A.dylib (951.7) <FF1D8AE4-ABEF-35F1-A30A-1183B9CB414F> /usr/lib/libobjc.A.dylib
+       0x180187000 -        0x1801bbd07  libdyld.dylib (1378) <B147D877-D0C2-388F-B38D-D3132E39905F> /usr/lib/system/libdyld.dylib
+       0x1801bc000 -        0x180262217  dyld (1.0.0 - 1378) <A237EF81-B68B-37BA-A165-92C965529534> /usr/lib/dyld
+       0x180263000 -        0x180266228  libsystem_blocks.dylib (96) <CC947089-488D-316B-A9C7-46DEC0F73145> /usr/lib/system/libsystem_blocks.dylib
+       0x180267000 -        0x1802bb55f  libxpc.dylib (3102.120.13) <C40FCAE8-7A17-3D82-87CB-3DA4802ADEF1> /usr/lib/system/libxpc.dylib
+       0x1802bc000 -        0x1802dc9ff  libsystem_trace.dylib (1861.120.4) <D0FABAB3-5AE7-3F10-8C62-60CBF5D70850> /usr/lib/system/libsystem_trace.dylib
+       0x1802dd000 -        0x18038b5f7  libcorecrypto.dylib (1922.121.1) <A01A158D-6FE7-3B1C-A2C4-6BCB90D7314A> /usr/lib/system/libcorecrypto.dylib
+       0x18038c000 -        0x1803dc1d7  libsystem_malloc.dylib (812.100.31) <5FAE4807-4D2B-3A95-A63A-DD96D3DA11B4> /usr/lib/system/libsystem_malloc.dylib
+       0x1803dd000 -        0x18042423f  libdispatch.dylib (1542.100.32) <F071EFE4-299F-3089-ACC4-0025B8FFB52A> /usr/lib/system/libdispatch.dylib
+       0x180425000 -        0x180427ffb  libsystem_featureflags.dylib (103) <71FCFFBD-85F8-3365-AFE0-BECEA4369122> /usr/lib/system/libsystem_featureflags.dylib
+       0x180428000 -        0x1804a8d9f  libsystem_c.dylib (1752.120.2) <694B7881-1BF3-3D0F-8F19-B50AE4E8EF8A> /usr/lib/system/libsystem_c.dylib
+       0x1804a9000 -        0x180539ae7  libc++.1.dylib (2100.43) <5013C0F8-84A9-3B56-9FEB-C353816A750F> /usr/lib/libc++.1.dylib
+       0x18053a000 -        0x18055475f  libc++abi.dylib (2100.43) <E482D257-E5A0-3816-BD97-7B39342958DA> /usr/lib/libc++abi.dylib
+       0x180555000 -        0x1805922af  libsystem_kernel.dylib (12377.121.6) <CC1CF985-BC65-3725-809F-4C1E36B8F4BA> /usr/lib/system/libsystem_kernel.dylib
+       0x180593000 -        0x18059fb3b  libsystem_pthread.dylib (539.100.4) <4F33683C-18C8-39A1-800B-2E3BD43BCC13> /usr/lib/system/libsystem_pthread.dylib
+       0x1805a0000 -        0x1805a8963  libsystem_platform.dylib (375.120.2) <160FD864-8D15-36FC-9E97-9725388CFAFE> /usr/lib/system/libsystem_platform.dylib
+       0x1805a9000 -        0x1805d86eb  libsystem_info.dylib (600) <3D62F2D9-F516-31BF-83C7-E203D872300B> /usr/lib/system/libsystem_info.dylib
+       0x184570000 -        0x184579e5f  libsystem_darwin.dylib (1752.120.2) <8858F025-745A-388E-9544-080781CC9A69> /usr/lib/system/libsystem_darwin.dylib
+       0x1849db000 -        0x1849ed1b6  libsystem_notify.dylib (348.120.4) <64D76451-1E0C-369B-A631-54DA3140E083> /usr/lib/system/libsystem_notify.dylib
+       0x186ca8000 -        0x186cc2f7b  libsystem_networkextension.dylib (2226.121.1) <0331EE20-A1FB-3C0D-990A-F65939CFF505> /usr/lib/system/libsystem_networkextension.dylib
+       0x186d45000 -        0x186d5cfdf  libsystem_asl.dylib (406) <F40838DF-2F15-3F62-970F-DEE25706BF1B> /usr/lib/system/libsystem_asl.dylib
+       0x188903000 -        0x18890b387  libsystem_symptoms.dylib (2169.120.7) <F5029F5C-1BF3-31C7-892E-BC8606AC829E> /usr/lib/system/libsystem_symptoms.dylib
+       0x18cba7000 -        0x18cbdf257  libsystem_containermanager.dylib (725.120.2) <518BE44D-AA31-31E6-B44B-A37AD5E47040> /usr/lib/system/libsystem_containermanager.dylib
+       0x18dfb8000 -        0x18dfbc5d7  libsystem_configuration.dylib (1405.120.5) <0F7BBC1C-3D50-3E59-A31F-E4672A80BCEB> /usr/lib/system/libsystem_configuration.dylib
+       0x18dfbd000 -        0x18dfc38cf  libsystem_sandbox.dylib (2680.120.12) <EC3A75EA-44C0-3A0B-9BF7-71C117B0A9C6> /usr/lib/system/libsystem_sandbox.dylib
+       0x18f617000 -        0x18f61a1fb  libquarantine.dylib (196.120.2) <5849009B-ACA3-3796-94C4-BBDF8D300EBA> /usr/lib/system/libquarantine.dylib
+       0x18fdb6000 -        0x18fdbcd03  libsystem_coreservices.dylib (191.4.5) <9576143B-C303-35A3-BA63-1FD06EDA2BB1> /usr/lib/system/libsystem_coreservices.dylib
+       0x190341000 -        0x19037ea77  libsystem_m.dylib (3312.100.1) <A7E0863C-101A-31A0-922B-ED9B02626151> /usr/lib/system/libsystem_m.dylib
+       0x190380000 -        0x190383527  libmacho.dylib (1378) <755441B4-C034-3E3A-8E3C-F424FBB28261> /usr/lib/system/libmacho.dylib
+       0x19039d000 -        0x1903aa3a7  libcommonCrypto.dylib (600035) <CE357BB1-2D49-37CC-9FFE-D093936B1475> /usr/lib/system/libcommonCrypto.dylib
+       0x1903ab000 -        0x1903b4ca3  libunwind.dylib (2100.2) <FC8F0C4E-6FB0-3E27-ABEF-B0FA720CD5E4> /usr/lib/system/libunwind.dylib
+       0x1903bd000 -        0x1903c77ff  libcopyfile.dylib (240) <8ACFAC7A-88E9-3EF4-853F-A9140FF110E5> /usr/lib/system/libcopyfile.dylib
+       0x1903c8000 -        0x1903cb987  libcompiler_rt.dylib (103.3) <AA79151F-C19D-3C7C-92F8-B10F04D82C1C> /usr/lib/system/libcompiler_rt.dylib
+       0x1903cc000 -        0x1903d078b  libsystem_collections.dylib (1752.120.2) <72DB5BE7-EF78-37D0-8AAD-53E37CFE4287> /usr/lib/system/libsystem_collections.dylib
+       0x1903d1000 -        0x1903d44cf  libsystem_secinit.dylib (168.100.7) <E525C566-CDA4-3D99-B12B-1615FD54A1F3> /usr/lib/system/libsystem_secinit.dylib
+       0x1903d5000 -        0x1903d7bf7  libremovefile.dylib (85.100.6) <635E661D-80A7-340D-A165-3F7D318FDFC9> /usr/lib/system/libremovefile.dylib
+       0x1903d8000 -        0x1903d8f27  libkeymgr.dylib (31) <8C08891A-DF1C-3DCC-AB64-4742FD6BE9BA> /usr/lib/system/libkeymgr.dylib
+       0x1903d9000 -        0x1903e1e37  libsystem_dnssd.dylib (2881.120.11) <6F45DF3F-233B-3BC3-BA8C-B43E7DA884BF> /usr/lib/system/libsystem_dnssd.dylib
+       0x1903e2000 -        0x1903e709b  libcache.dylib (95) <189B576E-6176-3F82-8FA4-5914B0BEAEE7> /usr/lib/system/libcache.dylib
+       0x1903e8000 -        0x1903e9ce3  libSystem.B.dylib (1356) <D65E4112-C151-3FF8-BEB7-4841436012D6> /usr/lib/libSystem.B.dylib
+       0x28361f000 -        0x283626349  libRosetta.dylib (367.9) <8651ED4F-6506-3788-B56B-32EE414A85CA> /usr/lib/libRosetta.dylib
+       0x28523c000 -        0x28523fa4b  libsystem_darwindirectory.dylib (122) <CF277A2C-C818-3F16-8B3F-3C7B39FCD164> /usr/lib/system/libsystem_darwindirectory.dylib
+       0x285240000 -        0x2852495d3  libsystem_eligibility.dylib (319.121.1) <DDAC0531-0262-3DDC-8EC8-80EB9438847A> /usr/lib/system/libsystem_eligibility.dylib
+       0x28524a000 -        0x28525188b  libsystem_sanitizers.dylib (26.1) <44C4234F-8B2D-38D3-A774-B4B3C75AF3A7> /usr/lib/system/libsystem_sanitizers.dylib
+       0x285252000 -        0x285252bb7  libsystem_trial.dylib (474.2.18.2) <68C583BA-AFF5-3916-86AE-6E38BFEF98D6> /usr/lib/system/libsystem_trial.dylib
