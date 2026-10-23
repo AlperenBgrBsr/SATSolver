@@ -21,3 +21,11 @@ CLAUDE.md
 
 /prof
 
+# Profiling build and scratch profiles (the profiles the report uses live in
+# docs/report/data/profiles/)
+src/sat-prof
+src/*.sample.txt
+
+# Shuffled instance copies: regenerated exactly from their seeds by
+# tests/shuffle_cnf.py. The result CSVs next to them are kept.
+tests/shuffled/*.cnf

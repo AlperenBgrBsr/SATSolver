@@ -13,8 +13,8 @@ Inputs (all produced by the scripts in tests/):
   tests/memory_sweep.csv                    memory_sweep.py run
   tests/proof_cost.csv                      proof_cost.py
   tests/shuffled/php9_8.luck-*.csv          luck_test.py
-  src/php.sample.txt, src/rand.sample.txt   sample, pre-counter binary
-  prof/pad0.sample.txt, prof/pad2048.sample.txt   sample, current binary
+  data/profiles/php.sample.txt, rand.sample.txt      sample, pre-counter binary
+  data/profiles/pad0.sample.txt, pad2048.sample.txt  sample, current binary
   data/ladder.txt                           latency_ladder output; built and run
                                             here if missing (takes ~2 minutes)
 """
@@ -36,6 +36,8 @@ import memory_sweep as ms    # noqa: E402
 
 DATA = os.path.join(HERE, "data")
 TABLES = os.path.join(HERE, "tables")
+# Raw profiles are kept with the report, so it rebuilds from a fresh clone.
+PROFILES = os.path.join(DATA, "profiles")
 
 
 def need(path):
@@ -102,8 +104,8 @@ def main():
     print("writing:")
 
     # Figure 1: where the time goes, php vs rand3 (same pre-counter binary).
-    php, php_fn, php_total = profile_shares(os.path.join(ROOT, "src", "php.sample.txt"), OLD_REGIONS)
-    rnd, _, _ = profile_shares(os.path.join(ROOT, "src", "rand.sample.txt"), OLD_REGIONS)
+    php, php_fn, php_total = profile_shares(os.path.join(PROFILES, "php.sample.txt"), OLD_REGIONS)
+    rnd, _, _ = profile_shares(os.path.join(PROFILES, "rand.sample.txt"), OLD_REGIONS)
     order = ["walk", "move", "unitconf", "skip", "unattr", "reach", "search"]   # bottom to top
     write_csv("regions.csv", ["idx", "php", "rand"],
               [[i + 1, "%.2f" % php[k], "%.2f" % rnd[k]] for i, k in enumerate(order)])
@@ -200,8 +202,8 @@ def main():
     nums["PadFootprint"] = "%.0f" % (pmax["rss_kb"] / p0["rss_kb"])
 
     # Region shift under padding, in cycles per visit (current binary).
-    a, _, _ = profile_shares(os.path.join(ROOT, "prof", "pad0.sample.txt"), NEW_REGIONS)
-    b, _, _ = profile_shares(os.path.join(ROOT, "prof", "pad2048.sample.txt"), NEW_REGIONS)
+    a, _, _ = profile_shares(os.path.join(PROFILES, "pad0.sample.txt"), NEW_REGIONS)
+    b, _, _ = profile_shares(os.path.join(PROFILES, "pad2048.sample.txt"), NEW_REGIONS)
     ca, cb = p0["cycles"] / p0["clause_visits"], pmax["cycles"] / pmax["clause_visits"]
     lines = []
     for k in ["search", "unattr", "skip", "reach", "walk", "move"]:

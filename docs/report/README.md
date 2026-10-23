@@ -22,7 +22,7 @@ of an experiment, followed by `make_data.py`, updates the report with no edits.
 ## Overleaf
 
 1. Run `python3 docs/report/make_data.py` locally (needs the CSVs under `tests/`
-   and the profiles under `src/` and `prof/`).
+   and the profiles in `data/profiles/`).
 2. Zip `docs/report/` and upload it: Overleaf → New Project → Upload Project.
 3. Set the main document to `main.tex` (Menu → Main document). For the one-pager,
    switch it to `summary.tex`.
